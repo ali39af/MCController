@@ -1,0 +1,12 @@
+{
+    "jdk": [
+        {
+            "use": "jdk-18.0.1.1",
+            "download": "http://dll.yservices.ir/mccontroller/jdk/jdk-18.0.1.1.zip"
+        },
+        {
+            "use": "jdk-17.0.2",
+            "download": "http://dll.yservices.ir/mccontroller/jdk/jdk-17.0.2.zip"
+        }
+    ]
+}

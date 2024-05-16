@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>${languages:13} - ${languages:14}</title>
+  <link href="/static/images/logo.png" rel="icon">
+  <link href="/static/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/dashboard.css" rel="stylesheet">
+
+</head>
+
+<body id="body-pd" class="body-pd">
+  ${server_components}
+  <main id="app_body" style="display: none; width: 100%; height: auto; margin: 17px;">
+    <div class="row row-cols-1 row-cols-lg-2">
+      <div class="col pb-2 mt-3">
+        <div style="margin-top: 20px;" class="card bg-dark">
+          <div style="color:White;" class="card-header"><i class="bx bx-lock-open-alt"></i> ${languages:14}</div>
+          <div style="color:White;" class="card-body">
+            <h4>${languages:15}</h4>
+            <div style="color:Black;" class="form-floating mb-3">
+              <input type="text" class="form-control" id="add_username" placeholder="${languages:9}">
+              <label for="add_username">${languages:9}</label>
+            </div>
+            <div style="color:Black;" class="form-floating mb-3">
+              <input type="password" class="form-control" id="add_password" placeholder="${languages:10}">
+              <label for="add_password">${languages:10}</label>
+            </div>
+            <div id="permissions">
+            </div>
+            <div class="d-grid">
+              <button onclick="access_add();" class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">${languages:15}</button>
+            </div>
+            <hr class="my-4">
+            <table class="table table-light">
+              <thead>
+                <tr>
+                  <th scope="col">${languages:9}</th>
+                  <th scope="col">${languages:16}</th>
+                </tr>
+              </thead>
+              <tbody id="user_list"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col pb-2 mt-3">
+        <div style="margin-top: 20px;" class="card bg-dark">
+          <div style="color:White;" class="card-header"><i class="bx bx-lock-open-alt"></i> ${languages:17}</div>
+          <div style="color:White;" class="card-body">
+            <h4>${languages:17}</h4>
+            <div style="color:Black;" class="form-floating mb-3">
+              <input type="text" class="form-control" id="rm_username" placeholder="${languages:9}">
+              <label for="rm_username">${languages:9}</label>
+            </div>
+            <div class="d-grid">
+              <button onclick="access_remove();" class="btn btn-danger btn-login text-uppercase fw-bold"
+                type="submit">${languages:17}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="/static/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/jquery-3.6.0.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/socket.io.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/tree.min.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <script type="text/javascript">
+    const socket = io(document.location.host);
+
+    //system api
+    socket.on('alert', data => {
+      if (data) {
+        loger('[System Api] Alert: ' + data, 1);
+        alert(data);
+      } else {
+        loger('[System Api] Alert Data!', 3);
+      }
+    });
+
+    socket.on('modal', modal => {
+      if (modal) {
+        if (modal.type == 'create') {
+          loger('[System Api] Modal Create: ' + modal.title, 1);
+          document.getElementById('ModalLabel').innerHTML = modal.title;
+          document.getElementById('modal_body').innerHTML = modal.body;
+          document.getElementById('modal_footer').innerHTML = modal.footer;
+          $('#Modal').modal('show');
+        } else if (modal.type == 'remove') {
+          loger('[System Api] Modal Removed!', 1);
+          document.getElementById('ModalLabel').innerHTML = '';
+          document.getElementById('modal_body').innerHTML = '';
+          document.getElementById('modal_footer').innerHTML = '';
+          $('#Modal').modal('hide');
+        }
+      } else {
+        loger('[System Api] Modal Data!', 3);
+      }
+    });
+
+    socket.on('reload', reload_req => {
+      if (reload_req) {
+        loger('[System Api] Reload Page!', 1);
+        window.location.reload();
+      } else {
+        loger('[System Api] Reload Page!', 3);
+      }
+    });
+
+    socket.on('go_location', location_addr => {
+      if (location_addr) {
+        loger('[System Api] Go To New Location!', 1);
+        window.location.replace(location_addr);
+      } else {
+        loger('[System Api] Go To New Location!', 3);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      loger('[System Api] Socket Disconnected!', 3);
+      $("#app_disconnect").show();
+      $("#app_nav").hide();
+      $("#app_body").hide();
+    });
+
+    socket.on('connected', () => {
+      loger('[System Api] Socket Connected!', 1);
+      $("#app_disconnect").hide();
+      $("#app_nav").show();
+      $("#app_body").show();
+    });
+
+    let data = [{ "id": "server_status", "text": "server_status", "children": [{ "id": "server", "text": "server", "children": [{ "id": "server_start", "text": "server_start" }, { "id": "server_stop", "text": "server_stop" }, { "id": "server_kill", "text": "server_kill" }, { "id": "server_usage", "text": "server_usage" }, { "id": "server_error_report", "text": "server_error_report" }] }, { "id": "console", "text": "console", "children": [{ "id": "console_receive", "text": "console_receive" }, { "id": "console_send_cmd", "text": "console_send_cmd" }] }] }, { "id": "options", "text": "options", "children": [{ "id": "options_change", "text": "options_change" }] }, { "id": "logs", "text": "logs", "children": [{ "id": "logs_list_files", "text": "logs_list_files", "children": [{ "id": "logs_select", "text": "logs_select" }, { "id": "logs_download", "text": "logs_download" }, { "id": "logs_delete", "text": "logs_delete" }] }] }, { "id": "files", "text": "files", "children": [{ "id": "files_list_files", "text": "files_list_files", "children": [{ "id": "files_open", "text": "files_open" }, { "id": "files_edit", "text": "files_edit" }, { "id": "files_delete", "text": "files_delete" }, { "id": "files_upload", "text": "files_upload" }, { "id": "files_unzip", "text": "files_unzip" }] }] }, { "id": "general_settings", "text": "general_settings", "children": [{ "id": "general_settings_change", "text": "general_settings_change" }, { "id": "general_settings_software_change", "text": "general_settings_software_change" }, { "id": "general_settings_jdk_change", "text": "general_settings_jdk_change" }] }, { "id": "profile", "text": "profile", "children": [{ "id": "profile_change_password", "text": "profile_change_password" }] }, { "id": "all", "text": "administrator", "children": [] }];
+    let permissions = [];
+
+    let tree = new Tree('#permissions', {
+      data: [{ id: '-1', text: 'permissions', children: data }],
+      closeDepth: 3,
+      onChange: function () {
+        permissions = this.values;
+      }
+    })
+
+    //access list
+    access_list();
+    function access_list() {
+      socket.emit('access_list', localStorage.getItem('token'), (access_list_callback) => {
+        if (access_list_callback.status == 'successful') {
+          loger('[Access List] ' + access_list_callback.message, 1);
+          document.getElementById('user_list').innerHTML = access_list_callback.user_list;
+        } else {
+          loger('[Access List] ' + access_list_callback.message, 3);
+        }
+      });
+    }
+
+    //access add
+    function access_add() {
+      const username = document.getElementById('add_username');
+      const password = document.getElementById('add_password');
+      let c_permissions = '';
+      let check_perms = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
+      permissions.forEach(permission => {
+        c_permissions += permission + ',';
+        if (check_perms[1] == 'false' && permission.split('server')[1] != undefined) {
+          c_permissions += 'server,';
+          check_perms[1] = 'true';
+          if (check_perms[0] == 'false') {
+            c_permissions += 'server_status,';
+            check_perms[0] = 'true';
+          }
+        }
+        if (check_perms[2] == 'false' && permission.split('options')[1] != undefined) {
+          c_permissions += 'options,';
+          check_perms[2] = 'true';
+        }
+        if (check_perms[1] == 'false' && permission.split('console')[1] != undefined) {
+          c_permissions += 'console,';
+          check_perms[1] = 'true';
+          if (check_perms[0] == 'false') {
+            c_permissions += 'server_status,';
+            check_perms[0] = 'true';
+          }
+        }
+        if (check_perms[3] == 'false' && permission.split('logs')[1] != undefined) {
+          c_permissions += 'logs,';
+          check_perms[3] = 'true';
+          if (check_perms[4] == 'false') {
+            c_permissions += 'logs_list_files,';
+            check_perms[4] = 'true';
+          }
+        }
+        if (check_perms[5] == 'false' && permission.split('files')[1] != undefined) {
+          c_permissions += 'files,';
+          check_perms[5] = 'true';
+          if (check_perms[6] == 'false') {
+            c_permissions += 'files_list_files,';
+            check_perms[6] = 'true';
+          }
+        }
+        if (check_perms[7] == 'false' && permission.split('general_settings')[1] != undefined) {
+          c_permissions += 'general_settings,';
+          check_perms[7] = 'true';
+        }
+        if (check_perms[8] == 'false' && permission.split('profile')[1] != undefined) {
+          c_permissions += 'profile,';
+          check_perms[8] = 'true';
+        }
+      });
+      socket.emit('access_add', localStorage.getItem('token'), username.value, password.value, c_permissions, (access_add_callback) => {
+        if (access_add_callback.status == 'successful') {
+          loger('[Access Add] ' + access_add_callback.message, 1);
+          username.value = '';
+          password.value = '';
+          access_list();
+        } else {
+          loger('[Access Add] ' + access_add_callback.message, 3);
+          username.value = '';
+          password.value = '';
+        }
+      });
+    }
+
+    //access remove
+    function access_remove() {
+      const username = document.getElementById('rm_username');
+      socket.emit('access_remove', localStorage.getItem('token'), username.value, (access_add_callback) => {
+        if (access_add_callback.status == 'successful') {
+          loger('[Access Remove] ' + access_add_callback.message, 1);
+          username.value = '';
+          access_list();
+        } else {
+          loger('[Access Remove] ' + access_add_callback.message, 3);
+          username.value = '';
+        }
+      });
+    }
+
+    console.log('%c[WARN]: %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    setInterval(() => {
+      console.log('%c[WARN] %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    }, 5000);
+
+    function loger(log, alert) {
+      if (log != undefined && alert != undefined) {
+        let date_ob = new Date();
+        let date = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+        let hours = date_ob.getHours();
+        let minutes = date_ob.getMinutes();
+        let seconds = date_ob.getSeconds();
+        let date_string = "[" + year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds + "]";
+        if (alert == 1) {
+          console.log(`${date_string} %c[INFO]: %c${log}`, 'color: #0000ff', 'color: #ffffff');
+        }
+        if (alert == 2) {
+          console.log(`${date_string} %c[WARN]: ${log}`, 'color: #ffff00');
+        }
+        if (alert == 3) {
+          console.log(`${date_string} %c[ERROR]: ${log}`, 'color: #ff0000');
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>${languages:13} - ${languages:23}</title>
+  <link href="/static/images/logo.png" rel="icon">
+  <link href="/static/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/dashboard.css" rel="stylesheet">
+
+</head>
+
+<body id="body-pd" class="body-pd">
+  ${server_components}
+  <main id="app_body" style="display: none; width: 100%; height: auto; margin: 17px;">
+    <div class="col pb-0 mt-0">
+      <div class="card bg-dark">
+        <div style="color:White;" class="card-header">
+          <div class="d-flex justify-content-between">
+            <div><i class="bx bx-file"></i> ${languages:23}</div>
+            <div>
+              <button type="button" class="btn btn-primary btn-sm"
+                onclick="files_location_update(document.location.href.split('#')[1]);"><i
+                  class="bx bx-refresh"></i></button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="files_upload_form();"><i
+                  class="bx bx-upload"></i></button>
+            </div>
+          </div>
+        </div>
+        <div style="color:White;" class="card-body">
+          <div id="files_list" style="color:White;" class="card-body">
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="/static/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/jquery-3.6.0.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/socket.io.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <script type="text/javascript">
+    let file_manager_location;
+    if (document.location.href.split('#')[1] == undefined) {
+      window.location.replace('#');
+      file_manager_location = document.location.href.split('#')[1];
+    } else {
+      file_manager_location = document.location.href.split('#')[1];
+    }
+
+    const socket = io(document.location.host);
+
+    //system api
+    socket.on('alert', data => {
+      if (data) {
+        loger('[System Api] Alert: ' + data, 1);
+        alert(data);
+      } else {
+        loger('[System Api] Alert Data!', 3);
+      }
+    });
+
+    socket.on('modal', modal => {
+      if (modal) {
+        if (modal.type == 'create') {
+          loger('[System Api] Modal Create: ' + modal.title, 1);
+          document.getElementById('ModalLabel').innerHTML = modal.title;
+          document.getElementById('modal_body').innerHTML = modal.body;
+          document.getElementById('modal_footer').innerHTML = modal.footer;
+          $('#Modal').modal('show');
+        } else if (modal.type == 'remove') {
+          loger('[System Api] Modal Removed!', 1);
+          document.getElementById('ModalLabel').innerHTML = '';
+          document.getElementById('modal_body').innerHTML = '';
+          document.getElementById('modal_footer').innerHTML = '';
+          $('#Modal').modal('hide');
+        }
+      } else {
+        loger('[System Api] Modal Data!', 3);
+      }
+    });
+
+    socket.on('reload', reload_req => {
+      if (reload_req) {
+        loger('[System Api] Reload Page!', 1);
+        window.location.reload();
+      } else {
+        loger('[System Api] Reload Page!', 3);
+      }
+    });
+
+    socket.on('go_location', location_addr => {
+      if (location_addr) {
+        loger('[System Api] Go To New Location!', 1);
+        window.location.replace(location_addr);
+      } else {
+        loger('[System Api] Go To New Location!', 3);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      loger('[System Api] Socket Disconnected!', 3);
+      $("#app_disconnect").show();
+      $("#app_nav").hide();
+      $("#app_body").hide();
+    });
+
+    socket.on('connected', () => {
+      loger('[System Api] Socket Connected!', 1);
+      $("#app_disconnect").hide();
+      $("#app_nav").show();
+      $("#app_body").show();
+    });
+
+    //files location update
+    function files_location_update(location) {
+      window.location.replace('#' + location);
+      file_manager_location = document.location.href.split('#')[1];
+      files_list_files();
+    }
+
+    //files list files
+    files_list_files();
+    function files_list_files() {
+      socket.emit('files_list_files', localStorage.getItem('token'), file_manager_location, (files_list_files_callback) => {
+        if (files_list_files_callback.status == 'successful') {
+          loger('[Files List Files] ' + files_list_files_callback.message, 1);
+          document.getElementById('files_list').innerHTML = files_list_files_callback.files_data;
+          setTimeout(() => { if (files_list_files_callback.files_data.indexOf('</textarea>') != -1) { enable_codeeditor(); } }, 250);
+        } else {
+          loger('[Files List Files] ' + files_list_files_callback.message, 3);
+        }
+      });
+    }
+
+    //files delete
+    function files_delete(file) {
+      socket.emit('files_delete', localStorage.getItem('token'), file, (files_delete_callback) => {
+        if (files_delete_callback.status == 'successful') {
+          loger('[Files Delete] ' + files_delete_callback.message, 1);
+          files_list_files();
+        } else {
+          loger('[Files Delete] ' + files_delete_callback.message, 3);
+        }
+      });
+    }
+
+    //files delete folder
+    function files_delete_folder(folder) {
+      socket.emit('files_delete_folder', localStorage.getItem('token'), folder, (files_delete_folder_callback) => {
+        if (files_delete_folder_callback.status == 'successful') {
+          loger('[Files Delete Folder] ' + files_delete_folder_callback.message, 1);
+          files_list_files();
+        } else {
+          loger('[Files Delete Folder] ' + files_delete_folder_callback.message, 3);
+        }
+      });
+    }
+
+    //files edit
+    function files_edit() {
+      const codeEditor_data = document.getElementById('codeEditor');
+      socket.emit('files_edit', localStorage.getItem('token'), file_manager_location, codeEditor_data.value, (files_edit_callback) => {
+        if (files_edit_callback.status == 'successful') {
+          loger('[Files Edit] ' + files_edit_callback.message, 1);
+        } else {
+          loger('[Files Edit] ' + files_edit_callback.message, 3);
+        }
+      });
+    }
+
+    //files upload
+    function files_upload_form() {
+      socket.emit('files_upload_form', localStorage.getItem('token'), file_manager_location, (files_upload_form_callback) => {
+        if (files_upload_form_callback.status == 'successful') {
+          loger('[Files Upload Form] ' + files_upload_form_callback.message, 1);
+        } else {
+          loger('[Files Upload Form] ' + files_upload_form_callback.message, 3);
+        }
+      });
+    }
+    function files_upload() {
+      const upload_file = document.getElementById('upload_file');
+      document.getElementById('upload_status').style.color = '#0d6efd';
+      document.getElementById('upload_status').textContent = 'Uploading...';
+      document.getElementById('upload_btn').disabled = true;
+      socket.emit('files_upload', localStorage.getItem('token'), file_manager_location + '/' + upload_file.files[0].name, upload_file.files[0], (files_upload_callback) => {
+        if (files_upload_callback.status == 'successful') {
+          loger('[Files Upload Form] ' + files_upload_callback.message, 1);
+          document.getElementById('upload_btn').disabled = false;
+          document.getElementById('upload_status').style.color = '#198754';
+          document.getElementById('upload_status').textContent = 'Upload File Done!';
+          files_list_files();
+        } else {
+          loger('[Files Upload Form] ' + files_upload_callback.message, 3);
+          document.getElementById('upload_btn').disabled = false;
+          document.getElementById('upload_status').style.color = '#dc3545';
+          document.getElementById('upload_status').textContent = 'Uploading Error!';
+        }
+      });
+    }
+
+    //files unzip
+    function files_unzip(file) {
+      socket.emit('files_unzip', localStorage.getItem('token'), file, file_manager_location, (files_unzip_callback) => {
+        if (files_unzip_callback.status == 'successful') {
+          loger('[Files Unzip] ' + files_unzip_callback.message, 1);
+          files_list_files();
+        } else {
+          loger('[Files Unzip] ' + files_unzip_callback.message, 3);
+        }
+      });
+    }
+
+    console.log('%c[WARN]: %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    setInterval(() => {
+      console.log('%c[WARN] %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    }, 5000);
+
+    function loger(log, alert) {
+      if (log != undefined && alert != undefined) {
+        let date_ob = new Date();
+        let date = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+        let hours = date_ob.getHours();
+        let minutes = date_ob.getMinutes();
+        let seconds = date_ob.getSeconds();
+        let date_string = "[" + year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds + "]";
+        if (alert == 1) {
+          console.log(`${date_string} %c[INFO]: %c${log}`, 'color: #0000ff', 'color: #ffffff');
+        }
+        if (alert == 2) {
+          console.log(`${date_string} %c[WARN]: ${log}`, 'color: #ffff00');
+        }
+        if (alert == 3) {
+          console.log(`${date_string} %c[ERROR]: ${log}`, 'color: #ff0000');
+        }
+      }
+    }
+    //const socket = io(document.location.host);
+    //let file_manager_location = document.location.href.split('#')[1];
+    //socket.on('login', data => {
+    //  if (data == 'login required') {
+    //    socket.emit('login', { token: localStorage.getItem('token') });
+    //  }
+    //  if (data == 'login Successful') {
+    //    socket.on('disconnect', () => {
+    //      $("#app_disconnect").show();
+    //      $("#app_nav").hide();
+    //      $("#app_body").hide();
+    //    });
+    //    setInterval(() => {
+    //      if (file_manager_location == undefined) {
+    //        window.location.replace('#');
+    //        file_manager_location = document.location.href.split('#')[1];
+    //        socket.emit('event', { event: 'get_server_files', file_manager_location: file_manager_location });
+    //      } else {
+    //        let old_file_manager_location = file_manager_location;
+    //        file_manager_location = document.location.href.split('#')[1];
+    //        if (old_file_manager_location != file_manager_location) {
+    //          socket.emit('event', { event: 'get_server_files', file_manager_location: file_manager_location });
+    //        }
+    //      }
+    //    });
+    //    if (file_manager_location != undefined) { socket.emit('event', { event: 'get_server_files', file_manager_location: file_manager_location }); }
+    //    socket.on('data', (data) => {
+    //      if (data.type == 'get_server_files') {
+    //        document.getElementById('receive_files').innerHTML = data.files_list;
+    //        enable_codeeditor();
+    //      }
+    //      if (data.type == 'update_get_server_files') {
+    //        socket.emit('event', { event: 'get_server_files', file_manager_location: file_manager_location });
+    //        alert(data.message);
+    //      }
+    //    });
+    //  }
+    //  if (data == 'login again required') {
+    //    window.location.replace('/login/');
+    //  }
+    //});
+    //socket.on('alert', data => {
+    //  alert(data);
+    //});
+    //socket.on('modal', data => {
+    //  if (data.type == 'create') {
+    //    document.getElementById('ModalLabel').innerHTML = data.title;
+    //    document.getElementById('modal_body').innerHTML = data.body;
+    //    document.getElementById('modal_footer').innerHTML = data.footer;
+    //    $('#Modal').modal('show');
+    //  } else if (data.type == 'remove') {
+    //    document.getElementById('ModalLabel').innerHTML = '';
+    //    document.getElementById('modal_body').innerHTML = '';
+    //    document.getElementById('modal_footer').innerHTML = '';
+    //    $('#Modal').modal('hide');
+    //  }
+    //});
+    //socket.on('reload', data => {
+    //  if (data == 'reload') {
+    //    window.location.reload();
+    //  }
+    //});
+    //socket.on('go_location', data => {
+    //  if (data.location) {
+    //    window.location.replace(data.location);
+    //  }
+    //});
+    //function update_file_codeeditor() {
+    //  const new_data = document.getElementById('codeEditor');
+    //  socket.emit('event', { event: 'update_server_file', location: document.location.href.split('#')[1], new_data: new_data.value });
+    //}
+    //function delete_file(file) {
+    //  socket.emit('event', { event: 'delete_server_file', file: file });
+    //  setTimeout(() => {
+    //    socket.emit('event', { event: 'get_server_files', file_manager_location: file_manager_location });
+    //  }, 150);
+    //}
+  </script>
+</body>
+
+</html>

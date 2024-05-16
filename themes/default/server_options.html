@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>${languages:13} - ${languages:32}</title>
+  <link href="/static/images/logo.png" rel="icon">
+  <link href="/static/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/dashboard.css" rel="stylesheet">
+
+</head>
+
+<body id="body-pd" class="body-pd">
+  ${server_components}
+  <main id="app_body" style="display: none; width: 100%; height: auto; margin: 17px;">
+    <div class="col pb-0 mt-0">
+      <div class="card bg-dark">
+        <div style="color:White;" class="card-body">
+          <div class="d-flex justify-content-start">
+            <img src="/static/server-icon.png" class="rounded float-right" alt="64">
+            <div style="margin-left: 15px;">
+              <h4>${server_public_address}:${server_port}</h4>
+              <input id="server_motd" placeholder="Server Motd" type="text" class="form-control" value="${server_motd}"
+                aria-describedby="inputGroup-sizing-sm">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: 35px;" class="card bg-dark">
+      <div style="color:White;" class="card-header"><i class="bx bx-cog"></i> ${languages:33}</div>
+      <div style="color:White;" class="card-body">
+        <div class="d-flex justify-content-between">
+          <div class="form-input">
+            <label class="form-check-label" for="server_spawn_protection">${languages:34}</label>
+            <input class="form-control" id="server_spawn_protection" type="number" step="1" min="1" max="30000000"
+              value="${server_spawn_protection}" />
+          </div>
+          <div class="form-input mb-3">
+            <label class="form-check-label" for="server_slots">${languages:35}</label>
+            <input class="form-control" id="server_slots" type="number" step="1" min="1" max="2147483647"
+              value="${server_slots}" />
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="form-input">
+            <label class="form-check-label" for="server_gamemode">${languages:36}</label>
+            <select id="server_gamemode" class="form-select mb-3">
+              <option value="0">${languages:37}</option>
+              <option value="1">${languages:38}</option>
+              <option value="2">${languages:39}</option>
+              <option value="3">${languages:40}</option>
+            </select>
+          </div>
+          <div class="form-input">
+            <label class="form-check-label" for="server_difficulty">${languages:41}</label>
+            <select id="server_difficulty" class="form-select mb-3">
+              <option value="1">${languages:42}</option>
+              <option value="0">${languages:43}</option>
+              <option value="2">${languages:44}</option>
+              <option value="3">${languages:45}</option>
+            </select>
+          </div>
+        </div>
+        <hr class="my-4">
+        <div class="d-flex justify-content-between">
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="false" id="server_whitelist">
+            <label class="form-check-label" for="server_whitelist">${languages:46}</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="true" id="server_cracked">
+            <label class="form-check-label" for="server_cracked">${languages:47}</label>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="true" id="server_pvp">
+            <label class="form-check-label" for="server_pvp">${languages:48}</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="true" id="server_monster">
+            <label class="form-check-label" for="server_monster">${languages:49}</label>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="false" id="server_fly">
+            <label class="form-check-label" for="server_fly">${languages:50}</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="true" id="server_animals">
+            <label class="form-check-label" for="server_animals">${languages:51}</label>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="false" id="server_commandblocks">
+            <label class="form-check-label" for="server_commandblocks">${languages:52}</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="true" id="server_villagers">
+            <label class="form-check-label" for="server_villagers">${languages:53}</label>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="false" id="server_force_gamemode">
+            <label class="form-check-label" for="server_force_gamemode">${languages:54}</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input mb-3" type="checkbox" value="true" id="server_nether">
+            <label class="form-check-label" for="server_nether">${languages:55}</label>
+          </div>
+        </div>
+        <hr class="my-4">
+        <div class="form-input">
+          <label class="form-check-label" for="server_resource_pack">${languages:56}</label>
+          <input value="${server_resource_pack}" class="form-control" id="server_resource_pack" type="input"
+            placeholder="https://example.com/Resource_pack.zip" />
+        </div>
+        <div class="d-grid gap-2" style="margin-top: 10px;"><button onclick="options_change();" type="button"
+            class="btn btn-primary">${languages:57}</button></div>
+      </div>
+    </div>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="/static/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/jquery-3.6.0.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/socket.io.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <script type="text/javascript">
+    $('#server_commandblocks')[0].checked = "${server_commandblocks}";
+    $('#server_whitelist')[0].checked = "${server_whitelist}";
+    $('#server_cracked')[0].checked = "${server_cracked}";
+    $('#server_pvp')[0].checked = "${server_pvp}";
+    $('#server_fly')[0].checked = "${server_fly}";
+    $('#server_animals')[0].checked = "${server_animals}";
+    $('#server_monster')[0].checked = "${server_monster}";
+    $('#server_villagers')[0].checked = "${server_villagers}";
+    $('#server_nether')[0].checked = "${server_nether}";
+    $('#server_force_gamemode')[0].checked = "${server_force_gamemode}";
+    $('#server_gamemode').val('"${server_gamemode}"');
+    $('#server_difficulty').val('"${server_difficulty}"');
+
+    const socket = io(document.location.host);
+
+    //system api
+    socket.on('alert', data => {
+      if (data) {
+        loger('[System Api] Alert: ' + data, 1);
+        alert(data);
+      } else {
+        loger('[System Api] Alert Data!', 3);
+      }
+    });
+
+    socket.on('modal', modal => {
+      if (modal) {
+        if (modal.type == 'create') {
+          loger('[System Api] Modal Create: ' + modal.title, 1);
+          document.getElementById('ModalLabel').innerHTML = modal.title;
+          document.getElementById('modal_body').innerHTML = modal.body;
+          document.getElementById('modal_footer').innerHTML = modal.footer;
+          $('#Modal').modal('show');
+        } else if (modal.type == 'remove') {
+          loger('[System Api] Modal Removed!', 1);
+          document.getElementById('ModalLabel').innerHTML = '';
+          document.getElementById('modal_body').innerHTML = '';
+          document.getElementById('modal_footer').innerHTML = '';
+          $('#Modal').modal('hide');
+        }
+      } else {
+        loger('[System Api] Modal Data!', 3);
+      }
+    });
+
+    socket.on('reload', reload_req => {
+      if (reload_req) {
+        loger('[System Api] Reload Page!', 1);
+        window.location.reload();
+      } else {
+        loger('[System Api] Reload Page!', 3);
+      }
+    });
+
+    socket.on('go_location', location_addr => {
+      if (location_addr) {
+        loger('[System Api] Go To New Location!', 1);
+        window.location.replace(location_addr);
+      } else {
+        loger('[System Api] Go To New Location!', 3);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      loger('[System Api] Socket Disconnected!', 3);
+      $("#app_disconnect").show();
+      $("#app_nav").hide();
+      $("#app_body").hide();
+    });
+
+    socket.on('connected', () => {
+      loger('[System Api] Socket Connected!', 1);
+      $("#app_disconnect").hide();
+      $("#app_nav").show();
+      $("#app_body").show();
+    });
+
+    //options change
+    function options_change() {
+      const server_motd = document.getElementById('server_motd');
+      const server_spawn_protection = document.getElementById('server_spawn_protection');
+      const server_slots = document.getElementById('server_slots');
+      const server_gamemode = document.getElementById('server_gamemode');
+      const server_difficulty = document.getElementById('server_difficulty');
+      const server_resource_pack = document.getElementById('server_resource_pack');
+      socket.emit('options_change', localStorage.getItem('token'),server_motd.value,server_spawn_protection.value,server_slots.value,server_gamemode.value,server_difficulty.value,server_resource_pack.value,$('#server_whitelist').is(':checked'),$('#server_cracked').is(':checked'),$('#server_pvp').is(':checked'),$('#server_monster').is(':checked'),$('#server_fly').is(':checked'),$('#server_animals').is(':checked'),$('#server_commandblocks').is(':checked'),$('#server_villagers').is(':checked'),$('#server_force_gamemode').is(':checked'),$('#server_nether').is(':checked'), (options_change_callback) => {
+        if (options_change_callback.status == 'successful') {
+          loger('[Options Change] ' + options_change_callback.message, 1);
+        } else {
+          loger('[Options Change] ' + options_change_callback.message, 3);
+        }
+      });
+    }
+
+    console.log('%c[WARN]: %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    setInterval(() => {
+      console.log('%c[WARN] %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    }, 5000);
+
+    function loger(log, alert) {
+      if (log != undefined && alert != undefined) {
+        let date_ob = new Date();
+        let date = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+        let hours = date_ob.getHours();
+        let minutes = date_ob.getMinutes();
+        let seconds = date_ob.getSeconds();
+        let date_string = "[" + year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds + "]";
+        if (alert == 1) {
+          console.log(`${date_string} %c[INFO]: %c${log}`, 'color: #0000ff', 'color: #ffffff');
+        }
+        if (alert == 2) {
+          console.log(`${date_string} %c[WARN]: ${log}`, 'color: #ffff00');
+        }
+        if (alert == 3) {
+          console.log(`${date_string} %c[ERROR]: ${log}`, 'color: #ff0000');
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

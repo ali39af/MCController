@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>${languages:13} - ${languages:21}</title>
+  <link href="/static/images/logo.png" rel="icon">
+  <link href="/static/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/dashboard.css" rel="stylesheet">
+</head>
+
+<body id="body-pd" class="body-pd">
+  ${server_components}
+  <main id="app_body" style="display: none; width: 100%; height: auto; margin: 17px;">
+    <div class="col pb-0 mt-0">
+      <div class="card bg-dark">
+        <div style="color:White;" class="card-header"><i class="bx bx-terminal"></i>
+          ${languages:21}
+        </div>
+        <div style="color:White;" class="card-body">
+          <ul id="console_box" style="display: none; height: 28rem; background-color: #232323;"
+            class="text-light rounded p-3 overflow-scroll">
+            <div id="container">
+              <ul id="console_messages"></ul>
+              <div id="input-line" class="input-line">
+                <div class="prompt"></div>
+                <div id="sendcmddiv" class="form-input"><label style="color:#cda869;" class="form-check-label"
+                    for="cmd_send_elment">></label><input list="commands" id="cmd_send_elment" class="cmdline"
+                    autofocus /></div>
+                <datalist id="commands">
+                  <option value="help">
+                  <option value="give [amount]">
+                  <option value="weather [rain, thunder, snow, and clear]">
+                  <option value="gamemode [player] [gamemode: Survival, creative, spectator, and adventure]">
+                  <option value="summon [object]">
+                  <option value="tp [username]">
+                  <option value="time set [Day or Night]">
+                  <option value="xp [player]">
+                  <option value="locatebiome [biome]">
+                  <option value="msg [player] [message]">
+                  <option value="save-all">
+                  <option value="stop">
+                  <option value="restart">
+                  <option value="worldborder">
+                  <option value="whitelist [add or remove] [player]">
+                  <option value="gamerule value">
+                  <option value="ban [player]">
+                  <option value="ban-ip [player]">
+                  <option value="pardon">
+                  <option value="banlist">
+                  <option value="clear [username]">
+                  <option value="datapack [pack]">
+                  <option value="op [player]">
+                  <option value="deop [player]">
+                  <option value="difficulty [difficulty: peaceful, easy, normal, hard]">
+                  <option value="seed">
+                </datalist>
+              </div>
+            </div>
+          </ul>
+          <ul id="console_offline_log" style="height: 28rem; background-color: #232323;"
+            class="text-light rounded p-3 overflow-scroll">
+            <center>
+              <h1 style="margin-top: 140px;color:#c26161;"><i class="bx bx-no-signal"></i>
+                ${languages:22}</h1>
+            </center>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="text/javascript" src="/static/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/jquery-3.6.0.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/socket.io.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <script type="text/javascript">
+    const socket = io(document.location.host);
+
+    //system api
+    socket.on('alert', data => {
+      if (data) {
+        loger('[System Api] Alert: ' + data, 1);
+        alert(data);
+      } else {
+        loger('[System Api] Alert Data!', 3);
+      }
+    });
+
+    socket.on('modal', modal => {
+      if (modal) {
+        if (modal.type == 'create') {
+          loger('[System Api] Modal Create: ' + modal.title, 1);
+          document.getElementById('ModalLabel').innerHTML = modal.title;
+          document.getElementById('modal_body').innerHTML = modal.body;
+          document.getElementById('modal_footer').innerHTML = modal.footer;
+          $('#Modal').modal('show');
+        } else if (modal.type == 'remove') {
+          loger('[System Api] Modal Removed!', 1);
+          document.getElementById('ModalLabel').innerHTML = '';
+          document.getElementById('modal_body').innerHTML = '';
+          document.getElementById('modal_footer').innerHTML = '';
+          $('#Modal').modal('hide');
+        }
+      } else {
+        loger('[System Api] Modal Data!', 3);
+      }
+    });
+
+    socket.on('reload', reload_req => {
+      if (reload_req) {
+        loger('[System Api] Reload Page!', 1);
+        window.location.reload();
+      } else {
+        loger('[System Api] Reload Page!', 3);
+      }
+    });
+
+    socket.on('go_location', location_addr => {
+      if (location_addr) {
+        loger('[System Api] Go To New Location!', 1);
+        window.location.replace(location_addr);
+      } else {
+        loger('[System Api] Go To New Location!', 3);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      loger('[System Api] Socket Disconnected!', 3);
+      $("#app_disconnect").show();
+      $("#app_nav").hide();
+      $("#app_body").hide();
+    });
+
+    socket.on('connected', () => {
+      loger('[System Api] Socket Connected!', 1);
+      $("#app_disconnect").hide();
+      $("#app_nav").show();
+      $("#app_body").show();
+    });
+
+    //console receive
+    let console_receive_status = 'false';
+    console_receive();
+    function console_receive() {
+      socket.emit('console_receive', localStorage.getItem('token'), (console_receive_d) => {
+        if (console_receive_d.status == 'successful') {
+          loger('[Console Receive] ' + console_receive_d.message, 1);
+          console_receive_status = 'true';
+        } else {
+          loger('[Console Receive] ' + console_receive_d.message, 3);
+          setTimeout(() => {
+            loger('[Console Receive] Test Again...', 1);
+            console_receive();
+          }, 500);
+        }
+      });
+    }
+    socket.on('console_receive', (console_receive) => {
+      if (console_receive.console_log) {
+        loger('[Console Receive] ' + console_receive.console_log, 1);
+        var item = document.createElement('h6');
+        console_receive.console_log = console_receive.console_log.replace('INFO', '<span style="color:#0040FF;">INFO</span>');
+        console_receive.console_log = console_receive.console_log.replace('WARN', '<span style="color:#FFFF00;">WARN</span>');
+        console_receive.console_log = console_receive.console_log.replace('ERROR', '<span style="color:#FF0000;">ERROR</span>');
+        item.innerHTML = console_receive.console_log;
+        document.getElementById('console_messages').appendChild(item);
+        document.getElementById('console_box').scrollTo(0, document.getElementById('console_box').scrollHeight);
+      }
+    });
+
+    //console send cmd
+    const cmd_send = document.getElementById('cmd_send_elment');
+    cmd_send.addEventListener('keydown', function (e) { if (e.key === 'Enter') { console_send_cmd(); } });
+    function console_send_cmd() {
+      socket.emit('console_send_cmd', localStorage.getItem('token'), cmd_send.value, (console_send_cmd) => {
+        if (console_send_cmd.status == 'successful') {
+          loger('[Console Send CMD] ' + console_send_cmd.message, 1);
+        } else {
+          loger('[Console Send CMD] ' + console_send_cmd.message, 3);
+        }
+      });
+      cmd_send.value = '';
+    }
+
+    //server status
+    server_status_get();
+    setInterval(() => {
+      server_status_get();
+    }, 1000);
+    function server_status_get() {
+      socket.emit('server_status', localStorage.getItem('token'), (server_status) => {
+        if (server_status.status == 'successful') {
+          if (server_status.server_status != 'offline' && server_status.server_status != 'process') {
+            document.getElementById('cmd_send_elment').disabled = false;
+            $("#console_box").show();
+            $("#console_offline_log").hide();
+          } else if (server_status.server_status == 'process') {
+            document.getElementById('cmd_send_elment').disabled = true;
+            $("#console_box").show();
+            $("#console_offline_log").hide();
+          } else {
+            if (console_receive_status == 'true') {
+              console_receive_status = 'false';
+              console_receive();
+            }
+            $("#console_box").hide();
+            $("#console_offline_log").show();
+          }
+        } else {
+          loger('[Server Status] ' + server_status.message, 3);
+        }
+      });
+    }
+
+    console.log('%c[WARN]: %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    setInterval(() => {
+      console.log('%c[WARN] %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    }, 5000);
+
+    function loger(log, alert) {
+      if (log != undefined && alert != undefined) {
+        let date_ob = new Date();
+        let date = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+        let hours = date_ob.getHours();
+        let minutes = date_ob.getMinutes();
+        let seconds = date_ob.getSeconds();
+        let date_string = "[" + year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds + "]";
+        if (alert == 1) {
+          console.log(`${date_string} %c[INFO]: %c${log}`, 'color: #0000ff', 'color: #ffffff');
+        }
+        if (alert == 2) {
+          console.log(`${date_string} %c[WARN]: ${log}`, 'color: #ffff00');
+        }
+        if (alert == 3) {
+          console.log(`${date_string} %c[ERROR]: ${log}`, 'color: #ff0000');
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

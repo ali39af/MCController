@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>${languages:13} - ${languages:13}</title>
+  <link href="/static/images/logo.png" rel="icon">
+  <link href="/static/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/vendors/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="/static/css/style.css" rel="stylesheet">
+  <link href="/static/css/dashboard.css" rel="stylesheet">
+
+</head>
+
+<body id="body-pd" class="body-pd">
+  ${server_components}
+  <main id="app_body" style="display: none; width: 100%; height: auto; margin: 17px;">
+    <div class="col pb-0 mt-0">
+      <div class="card bg-dark">
+        <div style="color:White;" class="card-header">
+          <center><i class="bx bx-server"></i> ${languages:13}</center>
+        </div>
+        <div style="color:White; padding: 0rem 0rem;" class="card-body">
+          <center style="margin-top: 10px;">
+            <h3>${server_public_address}:${server_port}</h3>
+            <h3>${server_name}</h3>
+          </center>
+          <div id="server_status" style="display: none; background-color: #ffffff00; color:White;" class="card-footer">
+            <center id="server_status_text"></center>
+          </div>
+          <div id="server_mini_console" style="display: none;" class="card-footer">
+            <div class="d-flex flex-row">
+              <i style="font-size: 23px;" class="bx bx-terminal"></i>
+              <div style="margin-left: 10px;" id="server_mini_console_text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h1> </h1>
+      <div class="d-flex justify-content-center">
+        <button id="start_server" style="display: none;margin-right: 5px;" onclick="server_start();" type="button"
+          class="btn btn-lg btn-success"><i class="bx bx-power-off"></i> ${languages:58}</button>
+        <button id="restart_server" style="display: none;margin-right: 5px;" onclick="server_restart();" type="button"
+          class="btn btn-lg btn-primary"><i class="bx bx-refresh"></i> ${languages:59}</button>
+        <button id="stop_server" style="display: none;margin-right: 5px;" onclick="server_stop();" type="button"
+          class="btn btn-lg btn-danger"><i class="bx bx-stop-circle"></i> ${languages:60}</button>
+        <button id="kill_server" style="display: none;" onclick="server_kill();" type="button"
+          class="btn btn-lg btn-danger"><i class="bx bx-bug-alt"></i> ${languages:61}</button>
+      </div>
+      <div class="row row-cols-1 row-cols-lg-2">
+        <div class="col pb-2 mt-3">
+          <div class="card bg-dark">
+            <div style="color:White;" class="card-header"><i class="bx bx-microchip"></i> ${languages:62}</div>
+            <div class="card-body">
+              <canvas id="system_usage_ram" style="width: 100%; height: 100%"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col pb-2 mt-3">
+          <div class="card bg-dark">
+            <div style="color:White;" class="card-header"><i class="bx bx-chip"></i> ${languages:63}</div>
+            <div class="card-body">
+              <canvas id="system_usage_cpu" style="width: 100%; height: 100%"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+  </main>
+
+  <script type="text/javascript" src="/static/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/jquery-3.6.0.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/socket.io.js"></script>
+  <script type="text/javascript" src="/static/vendors/libraries/chart.js"></script>
+  <script type="text/javascript" src="/static/js/main.js"></script>
+  <script type="text/javascript">
+    if (localStorage.getItem('server_ram_data') == undefined || localStorage.getItem('server_ram_data') == '') {
+      localStorage.setItem('server_ram_data', '[0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
+    }
+    if (localStorage.getItem('server_cpu_data') == undefined || localStorage.getItem('server_cpu_data') == '') {
+      localStorage.setItem('server_cpu_data', '[0,0,0,0,0,0,0,0,0,0,0,0,0,0]');
+    }
+
+    const ctx_1 = document.getElementById('system_usage_ram').getContext('2d');
+    const system_usage_ram = new Chart(ctx_1, {
+      type: 'line',
+      data: {
+        labels: ['30', '28', '26', '24', '22', '20', '18', '16', '14', '12', '10', '8', '6', '4', '2'],
+        datasets: [{
+          label: 'System Ram Use',
+          data: JSON.parse(localStorage.getItem('server_ram_data')),
+          backgroundColor: [
+            '#10ff00'
+          ],
+          borderColor: [
+            '#10ff00'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    const ctx_2 = document.getElementById('system_usage_cpu').getContext('2d');
+    const system_usage_cpu = new Chart(ctx_2, {
+      type: 'line',
+      data: {
+        labels: ['15', '14', '13', '12', '11', '10', '9', '8', '7', '6', '5', '4', '3', '2', '1'],
+        datasets: [{
+          label: 'System Cpu Use',
+          data: JSON.parse(localStorage.getItem('server_cpu_data')),
+          backgroundColor: [
+            '#fff700'
+          ],
+          borderColor: [
+            '#fff700'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    const socket = io(document.location.host);
+
+    //system api
+    socket.on('alert', data => {
+      if (data) {
+        loger('[System Api] Alert: ' + data, 1);
+        alert(data);
+      } else {
+        loger('[System Api] Alert Data!', 3);
+      }
+    });
+
+    socket.on('modal', modal => {
+      if (modal) {
+        if (modal.type == 'create') {
+          loger('[System Api] Modal Create: ' + modal.title, 1);
+          document.getElementById('ModalLabel').innerHTML = modal.title;
+          document.getElementById('modal_body').innerHTML = modal.body;
+          document.getElementById('modal_footer').innerHTML = modal.footer;
+          $('#Modal').modal('show');
+        } else if (modal.type == 'remove') {
+          loger('[System Api] Modal Removed!', 1);
+          document.getElementById('ModalLabel').innerHTML = '';
+          document.getElementById('modal_body').innerHTML = '';
+          document.getElementById('modal_footer').innerHTML = '';
+          $('#Modal').modal('hide');
+        }
+      } else {
+        loger('[System Api] Modal Data!', 3);
+      }
+    });
+
+    socket.on('reload', reload_req => {
+      if (reload_req) {
+        loger('[System Api] Reload Page!', 1);
+        window.location.reload();
+      } else {
+        loger('[System Api] Reload Page!', 3);
+      }
+    });
+
+    socket.on('go_location', location_addr => {
+      if (location_addr) {
+        loger('[System Api] Go To New Location!', 1);
+        window.location.replace(location_addr);
+      } else {
+        loger('[System Api] Go To New Location!', 3);
+      }
+    });
+
+    socket.on('disconnect', () => {
+      loger('[System Api] Socket Disconnected!', 3);
+      $("#app_disconnect").show();
+      $("#app_nav").hide();
+      $("#app_body").hide();
+    });
+
+    socket.on('connected', () => {
+      loger('[System Api] Socket Connected!', 1);
+      $("#app_disconnect").hide();
+      $("#app_nav").show();
+      $("#app_body").show();
+    });
+
+    //server start
+    function server_start() {
+      socket.emit('server_start', localStorage.getItem('token'), (server_start) => {
+        if (server_start.status == 'successful') {
+          loger('[Server Start] ' + server_start.message, 1);
+        } else {
+          loger('[Server Start] ' + server_start.message, 3);
+        }
+      });
+    }
+
+    //server stop
+    function server_stop() {
+      socket.emit('server_stop', localStorage.getItem('token'), (server_stop) => {
+        if (server_stop.status == 'successful') {
+          loger('[Server Stop] ' + server_stop.message, 1);
+        } else {
+          loger('[Server Stop] ' + server_stop.message, 3);
+        }
+      });
+    }
+
+    //server kill
+    function server_kill() {
+      socket.emit('server_kill', localStorage.getItem('token'), (server_kill) => {
+        if (server_kill.status == 'successful') {
+          loger('[Server Kill] ' + server_kill.message, 1);
+        } else {
+          loger('[Server Kill] ' + server_kill.message, 3);
+        }
+      });
+    }
+
+    //server restart
+    let is_restart = 'false';
+    function server_restart() {
+      loger('[Server Restart] Restarting!');
+      is_restart = 'true';
+      server_stop();
+    }
+
+    //server status
+    let is_start = 'false';
+    server_status_get();
+    setInterval(() => {
+      server_status_get();
+    }, 1000);
+    function server_status_get() {
+      socket.emit('server_status', localStorage.getItem('token'), (server_status) => {
+        if (server_status.status == 'successful') {
+          $("#server_status").show();
+          document.getElementById('server_status').style.backgroundColor = server_status.server_status_color;
+          document.getElementById('server_status_text').innerHTML = server_status.server_status_text;
+          if (server_status.server_status != 'offline' && server_status.server_status != 'process' && server_status.server_status != 'downloading') {
+            $('#stop_server').show();
+            $('#start_server').hide();
+            $('#kill_server').show();
+            $('#restart_server').show();
+            $('#server_mini_console').hide();
+            is_start = 'true';
+            server_usage_get();
+          } else if (server_status.server_status == 'process') {
+            $('#stop_server').hide();
+            $('#start_server').hide();
+            $('#kill_server').show();
+            $('#restart_server').hide();
+            if (server_status.server_mini_console_text != 'no') {
+              server_status.server_mini_console_text = server_status.server_mini_console_text.replace('INFO', '<span style="color:#0040FF;">INFO</span>');
+              server_status.server_mini_console_text = server_status.server_mini_console_text.replace('WARN', '<span style="color:#FFFF00;">WARN</span>');
+              server_status.server_mini_console_text = server_status.server_mini_console_text.replace('ERROR', '<span style="color:#FF0000;">ERROR</span>');
+              document.getElementById('server_mini_console_text').innerHTML = server_status.server_mini_console_text;
+              $('#server_mini_console').show();
+            }
+            is_start = 'true';
+            server_usage_get();
+          } else if (server_status.server_status == 'offline') {
+            if (is_restart == 'true') {
+              is_restart = 'false';
+              server_start();
+            } else {
+              if (is_start == 'true') {
+                is_start = 'false';
+                socket.emit('server_error_report', localStorage.getItem('token'), (server_error_report) => {
+                  if (server_error_report.status == 'successful') {
+                    loger('[Server Error Report] ' + server_error_report.message, 1);
+                  } else {
+                    loger('[Server Error Report] ' + server_error_report.message, 3);
+                  }
+                });
+              }
+              $('#stop_server').hide();
+              $('#start_server').show();
+              $('#kill_server').hide();
+              $('#restart_server').hide();
+              $('#server_mini_console').hide();
+            }
+          } else if (server_status.server_status == 'downloading') {
+            $('#stop_server').hide();
+            $('#start_server').hide();
+            $('#kill_server').hide();
+            $('#restart_server').hide();
+            $('#server_mini_console').hide();
+          }
+        } else {
+          loger('[Server Status] ' + server_status.message, 3);
+        }
+      });
+    }
+
+    //server usage
+    function server_usage_get() {
+      socket.emit('server_usage', localStorage.getItem('token'), (server_usage) => {
+        if (server_usage.status == 'successful') {
+          loger(`[Server Usage] Memory: ${server_usage.memory_usage}, Cpu: ${server_usage.cpu_usage}`, 1);
+          const old_data = JSON.parse(localStorage.getItem('server_cpu_data'));
+          localStorage.setItem('server_cpu_data', '[' + old_data[1] + ',' + old_data[2] + ',' + old_data[3] + ',' + old_data[4] + ',' + old_data[5] + ',' + old_data[6] + ',' + old_data[7] + ',' + old_data[8] + ',' + old_data[9] + ',' + old_data[10] + ',' + old_data[11] + ',' + old_data[12] + ',' + old_data[13] + ',' + server_usage.cpu_usage + ']');
+          system_usage_cpu.data.datasets[0].data.push(server_usage.cpu_usage);
+          if (system_usage_cpu.data.datasets[0].data.length > 9) system_usage_cpu.data.datasets[0].data.shift();
+          const old_data_2 = JSON.parse(localStorage.getItem('server_ram_data'));
+          localStorage.setItem('server_ram_data', '[' + old_data_2[1] + ',' + old_data[2] + ',' + old_data_2[3] + ',' + old_data_2[4] + ',' + old_data_2[5] + ',' + old_data_2[6] + ',' + old_data_2[7] + ',' + old_data_2[8] + ',' + old_data_2[9] + ',' + old_data_2[10] + ',' + old_data_2[11] + ',' + old_data_2[12] + ',' + old_data_2[13] + ',' + server_usage.memory_usage + ']');
+          system_usage_ram.data.datasets[0].data.push(server_usage.memory_usage);
+          if (system_usage_ram.data.datasets[0].data.length > 9) system_usage_ram.data.datasets[0].data.shift();
+          system_usage_ram.update();
+          system_usage_cpu.update();
+        } else {
+          loger('[Server Usage] ' + server_usage.message, 3);
+        }
+      });
+    }
+
+    console.log('%c[WARN]: %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    setInterval(() => {
+      console.log('%c[WARN] %cchackers from this section can infiltrate your account!!!', 'color:#ffff00;', 'color:#ff0000;');
+    }, 5000);
+
+    function loger(log, alert) {
+      if (log != undefined && alert != undefined) {
+        let date_ob = new Date();
+        let date = ("0" + date_ob.getDate()).slice(-2);
+        let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+        let year = date_ob.getFullYear();
+        let hours = date_ob.getHours();
+        let minutes = date_ob.getMinutes();
+        let seconds = date_ob.getSeconds();
+        let date_string = "[" + year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds + "]";
+        if (alert == 1) {
+          console.log(`${date_string} %c[INFO]: %c${log}`, 'color: #0000ff', 'color: #ffffff');
+        }
+        if (alert == 2) {
+          console.log(`${date_string} %c[WARN]: ${log}`, 'color: #ffff00');
+        }
+        if (alert == 3) {
+          console.log(`${date_string} %c[ERROR]: ${log}`, 'color: #ff0000');
+        }
+      }
+    }
+  </script>
+</body>
+
+</html>

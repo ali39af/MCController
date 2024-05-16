@@ -1,0 +1,231 @@
+{
+    "rows": "49",
+    "software": [
+        {
+            "use": "craftbukkit",
+            "type": "server",
+            "downloads": [
+                {
+                    "version": "1.19.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.19.2.jar"
+                },
+                {
+                    "version": "1.18.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.18.2.jar"
+                },
+                {
+                    "version": "1.17.1",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.17.1.jar"
+                },
+                {
+                    "version": "1.16.5",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.16.5.jar"
+                },
+                {
+                    "version": "1.15.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.15.2.jar"
+                },
+                {
+                    "version": "1.14.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.14.4.jar"
+                },
+                {
+                    "version": "1.13.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.13.2.jar"
+                },
+                {
+                    "version": "1.12.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.12.2.jar"
+                },
+                {
+                    "version": "1.11.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.11.2.jar"
+                },
+                {
+                    "version": "1.10.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.10.2.jar"
+                },
+                {
+                    "version": "1.9.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.9.4.jar"
+                },
+                {
+                    "version": "1.8.8",
+                    "download": "http://dll.yservices.ir/mccontroller/software/craftbukkit/craftbukkit-1.8.8.jar"
+                }
+            ]
+        },
+        {
+            "use": "paper",
+            "type": "server",
+            "downloads": [
+                {
+                    "version": "1.19.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.19.2-237.jar"
+                },
+                {
+                    "version": "1.18.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.18.2-387.jar"
+                },
+                {
+                    "version": "1.17.1",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.17.1-411.jar"
+                },
+                {
+                    "version": "1.16.5",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.16.5-794.jar"
+                },
+                {
+                    "version": "1.15.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.15.2-393.jar"
+                },
+                {
+                    "version": "1.14.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.14.4-245.jar"
+                },
+                {
+                    "version": "1.13.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.13.2-657.jar"
+                },
+                {
+                    "version": "1.12.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.12.2-1620.jar"
+                },
+                {
+                    "version": "1.11.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.11.2-1106.jar"
+                },
+                {
+                    "version": "1.10.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.10.2-918.jar"
+                },
+                {
+                    "version": "1.9.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.9.4-775.jar"
+                },
+                {
+                    "version": "1.8.8",
+                    "download": "http://dll.yservices.ir/mccontroller/software/paper/paper-1.8.8-445.jar"
+                }
+            ]
+        },
+        {
+            "use": "spigot",
+            "type": "server",
+            "downloads": [
+                {
+                    "version": "1.19.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.19.2.jar"
+                },
+                {
+                    "version": "1.18.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.18.2.jar"
+                },
+                {
+                    "version": "1.17.1",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.17.1.jar"
+                },
+                {
+                    "version": "1.16.5",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.16.5.jar"
+                },
+                {
+                    "version": "1.15.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.15.2.jar"
+                },
+                {
+                    "version": "1.14.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.14.4.jar"
+                },
+                {
+                    "version": "1.13.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.13.2.jar"
+                },
+                {
+                    "version": "1.12.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.12.2.jar"
+                },
+                {
+                    "version": "1.11.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.11.2.jar"
+                },
+                {
+                    "version": "1.10.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.10.2.jar"
+                },
+                {
+                    "version": "1.9.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.9.4.jar"
+                },
+                {
+                    "version": "1.8.8",
+                    "download": "http://dll.yservices.ir/mccontroller/software/spigot/spigot-1.8.8.jar"
+                }
+            ]
+        },
+        {
+            "use": "vanilla",
+            "type": "server",
+            "downloads": [
+                {
+                    "version": "1.19.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.19.2.jar"
+                },
+                {
+                    "version": "1.18.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.18.2.jar"
+                },
+                {
+                    "version": "1.17.1",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.17.1.jar"
+                },
+                {
+                    "version": "1.16.5",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.16.5.jar"
+                },
+                {
+                    "version": "1.15.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.15.2.jar"
+                },
+                {
+                    "version": "1.14.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.14.4.jar"
+                },
+                {
+                    "version": "1.13.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.13.2.jar"
+                },
+                {
+                    "version": "1.12.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.12.2.jar"
+                },
+                {
+                    "version": "1.11.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.11.2.jar"
+                },
+                {
+                    "version": "1.10.2",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.10.2.jar"
+                },
+                {
+                    "version": "1.9.4",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.9.4.jar"
+                },
+                {
+                    "version": "1.8.9",
+                    "download": "http://dll.yservices.ir/mccontroller/software/vanilla/vanilla-1.8.9.jar"
+                }
+            ]
+        },
+        {
+            "use": "waterfall",
+            "type": "bungee",
+            "downloads": [
+                {
+                    "version": "1.19-506",
+                    "download": "http://dll.yservices.ir/mccontroller/software/waterfall/waterfall-1.19-506.jar"
+                }
+            ]
+        }
+    ]
+}
