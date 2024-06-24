@@ -1,6 +1,8 @@
 # mccontroller
 MCController
 
+<p style="color: red;"><strong>Note: This project is deprecated and no longer supported. It will not receive updates in the future.</strong></p>
+
 ## a best MineCraft Controller
 MCController can create a MineCraft server and manage it.<br>
 and it's so powerfull.<br>
